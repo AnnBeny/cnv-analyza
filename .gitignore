@@ -1,0 +1,16 @@
+# Výstupy aplikace
+data_output/
+*.csv
+
+# Dočasné soubory
+*.tmp
+*.log
+*.bak
+
+# RStudio soubory
+.Rproj.user/
+*.Rproj
+
+# OS-specific
+.DS_Store
+Thumbs.db
