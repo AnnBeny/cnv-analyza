@@ -41,8 +41,8 @@ Složka cnv_analyza obsahuje:
 ## Spuštění
 
 ### 1. Spuštění přes ikonu na ploše
-Na Windows přes launch_app.bat - změnit cestu k R systému
-Na Linuxu přes launch.sh - změnit cestu k R skriptu
+Na Windows přes launch_app.bat - změnit cestu k R systému.
+Na Linuxu přes launch.sh - změnit cestu k R skriptu.
 
 ### 2. Spuštění v R Studiu
 
