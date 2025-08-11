@@ -87,17 +87,15 @@ ui <- page_sidebar(
     # Link to OMIM database
     tags$a(
       href = "https://www.omim.org", target = "_blank",
-      style = "font-weight: bold; font-size: 16px; display: block; margin-top: 10px;", # nolint
+      style = "font-weight: bold; font-size: 16px; display: block; text-align: center;", # nolint
       icon("database"), "OMIM databáze"
-    )
+    ),
+    br(), br(), br(), br(), br(), br(), br(),
+    #helpText(HTML("V případě dotazů pište na tento <a href='mailto:Benyskova.Anna@fnbrno.cz'>e-mail</a>")),
   ),
 
-  # top tab
-  card(
-    uiOutput("aktualizace"),
-    #uiOutput("gender_input"),
-    #uiOutput("action_button")
-  ),
+  # top card
+  uiOutput("panel_karta"),
   # bottom tab
   card(
     navset_card_tab(
@@ -114,29 +112,29 @@ ui <- page_sidebar(
 server <- function(input, output, session) {
 
   # actualization
-  output$aktualizace <- renderUI({
-    if (is.null(input$file)) {
-      card(
-        tags$div(
-          class = "text-left",
-          style = "margin-bottom: 10px;",
-          tags$p("Aktualizace", style = "font-weight: bold; color: #007BC2; font-size: 16px;"), # nolint
-          tags$p("Do CNV_M a CNV_Z přidán sloupce Row_id pro číslování řádků odpovídající původnímu pořadí.", style = "font-size: 14px;"), # nolint
-          tags$p("Automatické přejmenování souborů s příponou '(paired) Target Region Coverage'.", style = "font-size: 14px;"), # nolint
-        ),
-      )
-    } else {
-      card(
-        uiOutput("gender_input"),
-        uiOutput("action_button")
-      )
-    }
-  })
+  #output$aktualizace <- renderUI({
+  #  if (is.null(input$file)) {
+  #    card(
+  #      tags$div(
+  #        class = "text-left",
+  #        style = "margin-bottom: 10px;",
+  #        tags$p("Aktualizace", style = "font-weight: bold; color: #007BC2; font-size: 16px;"), # nolint
+  #        tags$p("Do CNV_M a CNV_Z přidán sloupce Row_id pro číslování řádků odpovídající původnímu pořadí.", style = "font-size: 14px;"), # nolint
+  #        tags$p("Automatické přejmenování souborů s příponou '(paired) Target Region Coverage'.", style = "font-size: 14px;"), # nolint
+  #      ),
+  #    )
+  #  } else {
+  #    card(
+  #      uiOutput("gender_input"),
+  #      uiOutput("action_button")
+  #    )
+  #  }
+  #})
 
   # Name of samples without suffixes
   sample_id <- reactive({
     req(input$file)
-    gsub("_cov\\.txt|| \\(paired\\) Target Region Coverage\\.txt$", "", input$file$name) # nolint
+    gsub("(_cov\\.txt|[ _]*\\(paired\\)[ _]*Targ(et|ed)?[ _]*Region[ _]*Coverage\\.txt)$", "", input$file$name) # nolint
   })
 
   # Take the last two letters from name of samples
@@ -145,6 +143,20 @@ server <- function(input, output, session) {
     if (is.null(input$file)) return("Kód várky: ")
     codes <- substr(sample_id(), nchar(sample_id()) - 1, nchar(sample_id())) # nolint
     paste("Kód várky: ", unique(codes), collapse = ", ")
+  })
+
+  output$panel_karta <- renderUI({
+    req(input$file)
+    card(
+      style = "resize: vertical; overflow: auto; height: 300px; 
+              box-shadow: 0 0.085rem 0.20rem rgba(0, 0, 0, 0.150);
+              border-radius: 0.5rem;
+              padding: 1rem;
+              background-color: white;
+              margin-bottom: 0px;",
+      uiOutput("gender_input"),
+      uiOutput("action_button")
+    )
   })
 
   # Button for choosing gender
@@ -212,7 +224,7 @@ server <- function(input, output, session) {
           df <- read.delim(file_list[i], check.names = FALSE)
           if (nrow(df) < 1 || ncol(df) < 15) stop()
           selected <- df[, 15, drop = FALSE]
-          base_name <- tools::file_path_sans_ext(gsub("_cov\\.txt|| \\(paired\\) Target Region Coverage\\.txt$", "", filenames[i])) # nolint
+          base_name <- tools::file_path_sans_ext(gsub("(_cov\\.txt|[ _]*\\(paired\\)[ _]*Targ(et|ed)?[ _]*Region[ _]*Coverage\\.txt)$", "", filenames[i])) # nolint
           gender <- input[[paste0("pohlavi", ids[i])]]
           colnames(selected) <- paste0(gender, "_", base_name)
           return(selected)
@@ -244,8 +256,8 @@ server <- function(input, output, session) {
 
         # Normalize coverage data for M samples
         normalized_m <- normalize_coverage(coverage[, m, drop = FALSE])
-        cat("---normalized_m--- \n")
-        print(head(normalized_m, 5))
+        #cat("---normalized_m--- \n")
+        #print(head(normalized_m, 5))
         cat("normalized_m has", nrow(normalized_m), "rows and", ncol(normalized_m), "columns\n") # nolint
 
         # Add Row_id to coverage data
@@ -255,23 +267,23 @@ server <- function(input, output, session) {
           normalized_m
         )
         #coverage_m_final <- cbind(coverage[, c(1:3)], Row_id = seq.int(nrow(coverage)), normalized_m) # nolint
-        cat("---coverage_m_final--- \n")
-        print(head(coverage_m_final, 5))
+        #cat("---coverage_m_final--- \n")
+        #print(head(coverage_m_final, 5))
 
         # Extract coverage columns for M samples
         coverage_cols <- coverage_m_final[, -c(1:4), drop = FALSE]
-        cat("---coverage_cols--- \n")
-        print(head(coverage_cols, 5))
+        #cat("---coverage_cols--- \n")
+        #print(head(coverage_cols, 5))
 
         # Calculate m_values based on coverage columns
         m_values <- abs(coverage_cols) > 0.25
-        cat("---m_values--- \n")
-        print(head(m_values, 5))
+        #cat("---m_values--- \n")
+        #print(head(m_values, 5))
 
         # Filter rows where any m_value is greater than 0
         greater_m <- coverage_m_final[rowSums(m_values, na.rm = TRUE) > 0, ]
-        cat("---greater_m--- \n")
-        print(head(greater_m, 5))
+        #cat("---greater_m--- \n")
+        #print(head(greater_m, 5))
 
         # Annotate greater_m with OMIM data
         greater_m <- annotate_with_omim(greater_m, omimgeny)

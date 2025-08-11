@@ -1,4 +1,5 @@
 # Výstupy aplikace
+data_input/
 data_output/
 *.csv
 
