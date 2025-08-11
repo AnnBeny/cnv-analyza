@@ -1,6 +1,6 @@
-# CNV Analýza
+# CNV Analýza 
 
-Aplikace v **R Shiny** pro zpracování pokrytí genů z textových souborů (*.cov.txt) – výstupů z CLC.  
+Aplikace v **R Shiny** pro zpracování pokrytí genů z panelového sekvenování (*.cov.txt) – výstupů z CLC.  
 Umožňuje:
 
 - Sloučit pokrytí všech vzorků do jednoho přehledného souboru (coverage.csv)
