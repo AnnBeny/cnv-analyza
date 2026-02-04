@@ -13,8 +13,9 @@ data_output/
 *.Rproj
 
 # OS-specific
-.DS_Store
+.Rhistory
 Thumbs.db
 
 # Zálohy
 *zaloha*
+_*
