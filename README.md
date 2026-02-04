@@ -77,6 +77,6 @@ Enjoy!
 
 🍬 2025 · [@AnnBeny](https://github.com/AnnBeny)
 
-![Shiny](https://img.shields.io/badge/shiny-app-blue?style=for-the-badge)
+![Shiny](https://img.shields.io/badge/app-shiny-bluish-green?style=for-the-badge)
 ![domain](https://img.shields.io/badge/domain-bioinformatics-6A5ACD?style=for-the-badge)
 ![python](https://img.shields.io/badge/python-3.10+-blue?style=for-the-badge)
