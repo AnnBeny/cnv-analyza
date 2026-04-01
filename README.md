@@ -28,7 +28,7 @@ Aplikace generuje tři CSV soubory:
 - (doporučeno) **RStudio**
 - R balíčky:
 
-    install.packages(c("shiny", "bslib", "magrittr"))
+    install.packages(c("shiny", "bslib", "magrittr", "DT"))
 
 ### Struktura projektu
 Složka cnv_analyza obsahuje:
@@ -43,6 +43,7 @@ Složka cnv_analyza obsahuje:
 ### 1. Spuštění přes ikonu na ploše
 Na Windows přes launch_app.bat - změnit cestu k R systému.
 Na Linuxu přes launch.sh - změnit cestu k R skriptu.
+Na plochu dát zástupce. Změnit ikonku.
 
 ### 2. Spuštění v R Studiu
 
