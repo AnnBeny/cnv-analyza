@@ -9,7 +9,7 @@ normalize_coverage <- function(df) {
 }
 
 # Load OMIM reference file safely
-load_omim_file <- function(path = "../reference/omim-phenptype-2024-upr-sl6.txt") { #nolint
+load_omim_file <- function(path = "../reference/gen-phenotyp2-uniq.txt") { #nolint
   if (!file.exists(path)) return(NULL)
   df <- tryCatch({
     read.table(path, header = TRUE, sep = "\t", stringsAsFactors = FALSE,
