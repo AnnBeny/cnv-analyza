@@ -70,7 +70,7 @@ Na plochu dát zástupce. Změnit ikonku.
 ### 4. Stáhni výsledky
 - V levém panelu klikni na Coverage, CNV M nebo CNV Z pro stažení výsledků
 
----
+-----
 
 Enjoy!
 
