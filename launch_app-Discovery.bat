@@ -1,5 +1,5 @@
 @echo off
 REM Launch CNV Shiny App
-cd %~dp0
-start "" "C:\Program Files\R\R-4.3.0\bin\Rscript.exe" -e "shiny::runApp('app', launch.browser = TRUE)"
+cd /D "D:\cnv_analyza\app"
+"C:\Program Files\R\R-4.3.0\bin\Rscript.exe" -e "shiny::runApp('.', launch.browser = TRUE)"
 pause
