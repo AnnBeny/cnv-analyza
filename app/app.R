@@ -68,7 +68,7 @@ ui <- page_sidebar(
   # Side panel
   sidebar = sidebar(
     # Kód várky
-    tags$h5(textOutput("text"), style = "color: #007BC2; font-weight: bold; font-size: 20px; margin-top: 10px"), # nolint
+    # tags$h5(textOutput("text"), style = "color: #007BC2; font-weight: bold; font-size: 20px; margin-top: 10px"), # nolint
     # Upload button
     fileInput("file", NULL, multiple = TRUE, accept = ".txt", buttonLabel = "Vybrat soubory", # nolint
               placeholder = "Nevybrán žádný soubor", width = "100%"),
