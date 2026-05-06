@@ -118,6 +118,7 @@ server <- function(input, output, session) {
           class = "text-left",
           style = "margin-bottom: 10px;",
           tags$p("Aktualizace", style = "font-weight: bold; color: #007BC2; font-size: 20px;"), # nolint
+          tags$p("6.5. aktualizovaný OMIM soubor"),
           tags$p("Interaktivní velikost okna a přidané posuvníky"),
           tags$p("Do názvu exportu přidané datum"),
           tags$p("Zdrojové soubory .txt musí obsahovat tyto sloupce: 1. Chromosome, 2. Region, 3. Name a 15. Mean_coverage"), # nolint
