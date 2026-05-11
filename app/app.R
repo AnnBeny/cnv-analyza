@@ -118,7 +118,8 @@ server <- function(input, output, session) {
           class = "text-left",
           style = "margin-bottom: 10px;",
           tags$p("Aktualizace", style = "font-weight: bold; color: #007BC2; font-size: 20px;"), # nolint
-          tags$p("6.5. aktualizovaný OMIM soubor. Vyhledávání podle regionu v bed souboru."),
+          # tags$p("6.5. aktualizovaný OMIM soubor. Vyhledávání podle regionu v bed souboru."),
+          tags$p("Zrušen sloupec OMIM."), # nolint
           tags$p("Interaktivní velikost okna a přidané posuvníky"),
           tags$p("Do názvu exportu přidané datum"),
           tags$p("Zdrojové soubory .txt musí obsahovat tyto sloupce: 1. Chromosome, 2. Region, 3. Name a 15. Mean_coverage"), # nolint
@@ -316,7 +317,7 @@ server <- function(input, output, session) {
         # Filter rows where any m_value is greater than 0
         greater_m <- coverage_m_final[rowSums(m_values, na.rm = TRUE) > 0, ]
 
-        greater_m <- annotate_with_omim(greater_m, omimgeny)
+        # greater_m <- annotate_with_omim(greater_m, omimgeny)
         #write.table(greater_m, "../data_output/CNV_M.csv", sep = ";", row.names = FALSE) # nolint
         cnv_m_data(greater_m)
       }
@@ -347,7 +348,7 @@ server <- function(input, output, session) {
         greater_z <- coverage_z_final[rowSums(z_values, na.rm = TRUE) > 0, ]
 
         # Annotate greater_z with OMIM data
-        greater_z <- annotate_with_omim(greater_z, omimgeny)
+        # greater_z <- annotate_with_omim(greater_z, omimgeny)
         #write.table(greater_z, "../data_output/CNV_Z.csv", sep = ";", row.names = FALSE) # nolint
         cnv_z_data(greater_z)
       }
