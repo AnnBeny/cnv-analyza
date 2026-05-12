@@ -45,22 +45,100 @@ ui <- page_sidebar(
         padding-top: 0px !important;
         margin-top: 0px;
       }
+      .panel_karta {
+        height: 300px;
+        overflow: auto;
+        box-shadow: 0 0.085rem 0.20rem rgba(0, 0, 0, 0.150);
+        border-radius: 0.5rem;
+        background-color: white;
+      }
       .gender-row {
         display: flex;
         align-items: center;
-        gap: 0 !important; 
-        margin-bottom: 5px;
+        text-align: left;
+        gap: 10px;
+        margin-bottom: 0px;
         padding: 0;
       }
       .gender-label {
-        width: 120px;
+        text-align: right;
+        width: 300px;
+        justify-content: start;
+        align-items: center;
+        padding-bottom: 0px;
+      }
+      .gender-select {
+        display: flex;
+        align-self: center;
+        justify-content: start;
+        transform: translateY(8px);
       }
       .gender-select .form-group {
         margin: 0;
+        padding: 0;
         width: 80px;
+        align-items: center;
+      }
+      .gender-select .form-group .selectize-input {
+        border: 1px solid #ced4da;
+        border-radius: 8px !important;
+        font-size: 16px;
+        padding: 6px 12px;
+        margin-bottom: 0px;
+      }
+      .selectize-dropdown {
+        z-index: 99999 !important;
+      }
+      .info-gender-card {
+        margin-bottom: 0px;
+        overflow: auto;
+        box-shadow: 0 0.085rem 0.20rem rgba(0, 0, 0, 0.150);
+        border-radius: 0.5rem;
+        padding: 1.25rem;
+        background-color: white;
+        resize: vertical;
+      }
+      .info-gender-card-small {
+        height: 150px;
+        overflow: auto;
       }
       .card-body.bslib-gap-spacing {
         gap: 0 !important;
+      }
+      .submit-task-button {
+        text-align: left; 
+        margin-top: 10px;
+        margin-left: 190px;
+        margin-bottom: 20px;
+      }
+      .submit-task-button .btn {
+        width: 200px; 
+        font-size: 18px; 
+        padding: 10px; 
+        background-color: green; 
+        border: none; 
+        border-radius: 8px;
+      }
+      .results-card {
+        height: 65vh !important;
+        min-height: 520px !important;
+      }
+      .results-card > .shiny-html-output,
+      .results-card .bslib-card,
+      .results-card .card {
+        height: 100% !important;
+      }
+
+      .results-card .card-body,
+      .results-card .tab-content,
+      .results-card .tab-pane {
+        height: 100% !important;
+      }
+      h5 {
+        color: #007BC2;
+        font-weight: bold;
+        font-size: 20px;
+        margin-top: 10px;
       }
     "))
   ),
@@ -98,19 +176,31 @@ ui <- page_sidebar(
   uiOutput("aktualizace"),
   uiOutput("panel_karta"),
   # bottom tab
-  card(
-    navset_card_tab(
-      nav_panel("Table", DT::dataTableOutput("coverage_table")),
-      nav_panel("CNV M", DT::dataTableOutput("cnv_m")),
-      nav_panel("CNV Z", DT::dataTableOutput("cnv_z"))
-    )
+  # card(
+  #   navset_card_tab(
+  #     nav_panel("Table", DT::dataTableOutput("coverage_table")),
+  #     nav_panel("CNV M", DT::dataTableOutput("cnv_m")),
+  #     nav_panel("CNV Z", DT::dataTableOutput("cnv_z"))
+  #   )
+  # )
+  div(
+    class = "results-card",
+    uiOutput("results_panel")
   )
+  
 )
 
 ######################################################################################################################## # nolint
 
 # --- Server logic ---
 server <- function(input, output, session) {
+
+  final_data <- reactiveVal()
+  pohlavi_data <- reactiveVal()
+  cnv_m_data <- reactiveVal()
+  cnv_z_data <- reactiveVal()
+  submit_status <- reactiveVal("ready")
+
   output$aktualizace <- renderUI({
     if (is.null(input$file)) {
       card(
@@ -153,22 +243,36 @@ server <- function(input, output, session) {
   })
 
   # Take the last two letters from name of samples
-  output$text <- renderText({
-    req(sample_id())
-    if (is.null(input$file)) return("Kód várky: ")
-    codes <- substr(sample_id(), nchar(sample_id()) - 1, nchar(sample_id())) # nolint
-    paste("Kód várky: ", unique(codes), collapse = ", ")
-  })
+  # output$text <- renderText({
+  #   req(sample_id())
+  #   if (is.null(input$file)) return("Kód várky: ")
+  #   codes <- substr(sample_id(), nchar(sample_id()) - 1, nchar(sample_id())) # nolint
+  #   paste("Kód várky: ", unique(codes), collapse = ", ")
+  # })
 
-  output$panel_karta <- renderUI({
+  # output$panel_karta <- renderUI({
+  #   req(input$file)
+  #   card(
+  #     style = "resize: vertical; overflow: auto; height: 300px; 
+  #             box-shadow: 0 0.085rem 0.20rem rgba(0, 0, 0, 0.150);
+  #             border-radius: 0.5rem;
+  #             padding: 1rem;
+  #             background-color: white;
+  #             margin-bottom: 0px;",
+  #     uiOutput("gender_input"),
+  #     uiOutput("action_button")
+  #   )
+  # })
+
+    output$panel_karta <- renderUI({
     req(input$file)
-    card(
-      style = "resize: vertical; overflow: auto; height: 300px; 
-              box-shadow: 0 0.085rem 0.20rem rgba(0, 0, 0, 0.150);
-              border-radius: 0.5rem;
-              padding: 1rem;
-              background-color: white;
-              margin-bottom: 0px;",
+    div(
+      class = if (!is.null(final_data()) && nrow(final_data()) > 0) {
+        "info-gender-card info-gender-card-small"
+      } else {
+        "info-gender-card"
+      },
+      tags$h5("Zadejte pohlaví pro každý vzorek:"), # nolint
       uiOutput("gender_input"),
       uiOutput("action_button")
     )
@@ -181,44 +285,52 @@ server <- function(input, output, session) {
       div(class = "gender-row",
         div(class = "gender-label", strong(id)),
         div(class = "gender-select",
-          selectInput(
+          selectizeInput(
             inputId = paste0("pohlavi", id),
             label = NULL,
             choices = c("Muž" = "M", "Žena" = "Z"),
             width = "80px",
-            selectize = TRUE
+            # selectize = TRUE
+            options = list(
+              dropdownParent = "body"
+            )
           )
         )
       )
     })
   })
 
-  final_data <- reactiveVal()
-  pohlavi_data <- reactiveVal()
-  cnv_m_data <- reactiveVal()
-  cnv_z_data <- reactiveVal()
-  submit_status <- reactiveVal("ready")
-
   # Button to process input and run analysis
+  # output$action_button <- renderUI({
+  #   req(input$file)
+  #   if (submit_status() == "processing") {
+  #     actionButton(
+  #       "submit",
+  #       label = "Zpracovávám...",
+  #       icon = icon("spinner", class = "fa-spin"),
+  #       class = "btn btn-primary",
+  #       style = "margin-top: 5px; width: 200px; font-size: 20px; padding: 10px;"
+  #     )
+  #   } else {
+  #     actionButton(
+  #       "submit",
+  #       label = "Zpracovat",
+  #       icon = icon("check"),
+  #       class = "btn btn-success",
+  #       style = "margin-top: 5px; width: 200px; font-size: 20px; padding: 10px;"
+  #     )
+  #   }
+  # })
+
   output$action_button <- renderUI({
     req(input$file)
-    if (submit_status() == "processing") {
-      actionButton(
-        "submit",
-        label = "Zpracovávám...",
-        icon = icon("spinner", class = "fa-spin"),
-        class = "btn btn-primary",
-        style = "margin-top: 5px; width: 200px; font-size: 20px; padding: 10px;"
-      )
-    } else {
-      actionButton(
+    div(class = "submit-task-button",
+      input_task_button(
         "submit",
         label = "Zpracovat",
-        icon = icon("check"),
-        class = "btn btn-success",
-        style = "margin-top: 5px; width: 200px; font-size: 20px; padding: 10px;"
+        submit_status()
       )
-    }
+    )
   })
 
   # --- Makeing Tables Coverages and CNV ---
@@ -358,6 +470,16 @@ server <- function(input, output, session) {
     submit_status("ready")
   })
 
+  output$results_panel <- renderUI({
+    req(!is.null(final_data()))
+
+    navset_card_tab(
+      nav_panel("Coverage Mean ALL", DT::dataTableOutput("coverage_table")),
+      nav_panel("CNV Muži Mean", DT::dataTableOutput("cnv_m")),
+      nav_panel("CNV Ženy Mean", DT::dataTableOutput("cnv_z"))
+    )
+  })
+
   # --- Tables into bottom tab ---
   #output$coverage_table <- renderTable({ final_data() })
   #output$cnv_m <- renderTable({ cnv_m_data() })
@@ -372,7 +494,8 @@ server <- function(input, output, session) {
       df,
       options = list(
         pageLength = 25,
-        scrollX = TRUE
+        scrollX = TRUE,
+        scrollY = "45vh"
       )
     )
   })
@@ -386,7 +509,8 @@ server <- function(input, output, session) {
       df,
       options = list(
         pageLength = 25,
-        scrollX = TRUE
+        scrollX = TRUE,
+        scrollY = "45vh"
       )
     )
   })
@@ -398,7 +522,8 @@ server <- function(input, output, session) {
       df,
       options = list(
         pageLength = 25,
-        scrollX = TRUE
+        scrollX = TRUE,
+        scrollY = "45vh"
       )
     )
   })
